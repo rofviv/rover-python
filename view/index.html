@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Rover control</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+    <link rel="stylesheet" type="text/css" href="./style.css">
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script src="leaflet.rotatedMarker.js"></script>
+</head>
+
+<body>
+    <div class="contenedor-body">
+        <div class="row">
+            <div class="col-9">
+                <div class="camara-contenedor">
+                    Camara
+                </div>
+            </div>
+            <div class="col-3">
+                <span id="estadoVehiculoID">Desconectado</span>
+                <div class="info-container">
+                    <div class="row">
+                        <div class="col-2">
+                            Conexion:
+                        </div>
+                        <div class="col-7">
+                            <input id="txtConexion" class="form-control form-control-sm" type="text" placeholder="127.0.0.1:14551" value="127.0.0.1:14551">
+                        </div>
+                        <div class="col-2">
+                            <button onclick="conectarRover();" type="button" class="btn btn-primary btn-sm">Conectar</button>
+                        </div>
+                    </div>
+                    <br>
+                    Modo: <span class="modo-texto" id="modoActual"></span> <br>
+                    Vehiculo: <span class="modo-texto" id="armDisarmId"></span> <br>
+                    Bateria: <span class="modo-texto" id="bateriaID"></span> <br>
+                    <div class="row">
+                        <div class="col-5">
+                            Velocidad: <span class="modo-texto" id="velocidadID"></span> <br>
+                        </div>
+                        <div class="col-4">
+                            <input id="txtVelocidad" type="number" class="form-control form-control-sm" type="text" placeholder="0.5" value="0.5">
+                        </div>
+                        <div class="col-3">
+                            <button onclick="cambiarVelocidad();" type="button" class="btn btn-primary btn-sm">Cambiar</button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="controler-contenedor">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="row">
+                                <button onclick="avanzar();" type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-chevron-up"></i></button>
+                            </div>
+                            <div class="row">
+                                <div class="col col-no-espacios col-margen">
+                                    <button onclick="girarIzquierda();" type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-chevron-left"></i></button>
+                                </div>
+                                <div class="col col-no-espacios col-margen">
+                                    <button onclick="girarDerecha();" type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button onclick="retroceder();" type="button" class="btn btn-primary btn-sm btn-block"><i class="fa fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <select class="form-control" id="selectIdRuta">
+                                </select>
+                            </div>
+                            <button onclick="asignarMision();" type="button" class="btn btn-info btn-sm btn-block">Asignar Mision</button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="armarDesarmar();" type="button" class="btn btn-danger btn-sm btn-block">Armar/Desarmar (E)</button>
+                    </div>
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="modoAutomatico();" type="button" class="btn btn-info btn-sm btn-block">Modo Automatico (A)</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="modoGuiado();" type="button" class="btn btn-success btn-sm btn-block">Modo Guiado (G)</button>
+                    </div>
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="modoManual();" type="button" class="btn btn-warning btn-sm btn-block">Modo Manual (M)</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="modoHold();" type="button" class="btn btn-info btn-sm btn-block">Modo Hold (H)</button>
+                    </div>
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="cerrarConexionVehiculo();" type="button" class="btn btn-sm btn-danger btn-block">Desconectar (D)</button>
+                    </div>
+                </div>
+                <hr>
+                <span id="msjRutaID" class="mensaje-texto">
+                </span>
+                <div class="row">
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="empezarRuta();" type="button" class="btn btn-danger btn-sm btn-block">Empezar a guardar Ruta</button>
+                    </div>
+                    <div class="col col-no-espacios col-margen">
+                        <button onclick="guardarRuta();" type="button" class="btn btn-info btn-sm btn-block">Guardar Ruta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-9">
+                <div id="mapid"></div>
+            </div>
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="txtHistorial">Historial de comandos</label>
+                    <textarea readonly class="form-control" id="txtHistorial" rows="15"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="./script.js"></script>
+
+</html>

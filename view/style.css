@@ -1,0 +1,43 @@
+.camara-contenedor {
+	height: 500px;
+	width:100%;
+	background: teal;
+}
+#mapid {
+	height: 400px;
+}
+
+.col-margen {
+	margin: 4px 2px;
+}
+
+.col-no-espacios {
+	padding: 0px
+}
+
+.modo-texto {
+	font-weight: 600;
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+.controler-contenedor {
+	margin: 0px 0px;
+}
+
+.contenedor-body {
+	margin: 8px 4px;
+}
+
+#estadoVehiculoID {
+	font-weight: 600;
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+.mensaje-texto {
+	font-weight: 600;
+	font-size: 18px;
+	letter-spacing: 1px;
+	color: green;
+}
